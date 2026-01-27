@@ -1,4 +1,5 @@
 import io
+import os
 import zipfile
 from flask import Flask, render_template, request, jsonify, send_file
 from template_data import SYSTEM_PROMPT, TEMPLATE_RESULT
@@ -122,4 +123,7 @@ def zip_project():
     )
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
+
+
