@@ -27,22 +27,7 @@ Le projet repose sur une **méthodologie structurée de rédaction de prompts**,
 
 ### 🔹 Frameworks intégrés
 
-- **CRISP Prompting**
-  - Context
-  - Role
-  - Instructions
-  - Structure
-  - Parameters
-
-- **Template-based Prompting**
-  - Prompts prédéfinis et réutilisables
-  - Normalisation des entrées utilisateur
-
-- **Chain of Thought (simplifié)**
-  - Analyse du prompt
-  - Correction logique
-  - Génération structurée du template
-
+Utilisant la méthode de RODE , SCQA , CO-STAR , ICDF ET FEW-SHOTS
 ---
 
 ## ✍️ Correction et amélioration des prompts
@@ -88,7 +73,7 @@ Le système est capable de :
 - **LaTeX**
 - **HTML5**
 - **CSS3**
-- **JavaScript (DOM & logique de prompting)**
+- **JavaScript**
 - (Optionnel) Génération PDF côté navigateur
 
 ---
