@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PROMPT ENGINEERING</title>
+
+  <link rel="stylesheet" href="app.css" />
+
+  <!-- JSZip (ZIP côté navigateur) -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+
+<body>
+  <!-- BACKGROUND -->
+  <div class="bg">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="grain"></div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="hamburger" id="btnMenu" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="sideBrand">
+        <div class="sideBrand__name">PROMPT ENGINEERING</div>
+        <div class="sideBrand__sub">Realisé par Abadour Hicham</div>
+      </div>
+
+      <nav class="sideNav" id="sideNav">
+        <a class="sideLink is-active" href="#home"><span>01</span> Home</a>
+        <a class="sideLink" href="#tabs"><span>02</span> Tabs</a>
+        <a class="sideLink" href="#pdf"><span>03</span> PDF</a>
+      </nav>
+
+      <div class="sideFooter">
+        <div class="sideLabel">Scroll</div>
+        <div class="sideProgress">
+          <div class="sideProgress__bar" id="progressBar"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" id="home">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar__inner">
+          <div class="brand">
+            <img class="brand__logo" src="assets/ensa_logo.png" alt="ENSA" />
+            <div class="brand__text">
+              <h1 class="brand__title">PROMPT ENGINEERING</h1>
+              <p class="brand__subtitle">LaTeX Template Generator</p>
+            </div>
+          </div>
+
+          <div class="badges">
+            <span class="badge">SCQA · ICDF · Few-shot · CO-STAR · STAR</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="heroLeft">
+          <div class="heroTitle">
+            <div class="heroTitle__small">PromptTex</div>
+            <div class="heroTitle__big">Generator</div>
+          </div>
+
+          <p class="heroText">
+           Demande → correction (frameworks) → génération ZIP LaTeX + PDF modèle.
+          </p>
+
+          <div class="heroActions">
+            <button class="btn btn--primary" id="btnExample">CHARGER UN EXEMPLE</button>
+          </div>
+
+          <div class="heroDots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="heroRight">
+          <div class="heroCard">
+            <div class="heroCard__top">
+              <div class="heroNums">
+                <span class="num is-on">02</span>
+                <span class="num">03</span>
+              </div>
+              <div class="heroMiniBtns">
+                <button class="iconBtn" id="btnRefine" title="Corriger le prompt">↺</button>
+                <button class="iconBtn" id="btnGenerate" title="Générer template ZIP">⚡</button>
+              </div>
+            </div>
+
+            <div class="heroCard__screen">
+              <div class="spinner"></div>
+              <div class="screenLabel">ZIP + PDF</div>
+            </div>
+
+            <div class="heroCard__bottom">
+              <button class="btn btn--thin" id="btnZip" disabled>TÉLÉCHARGER ZIP TEX CODE</button>
+              <button class="btn btn--thin btn--alt" id="btnPdf">GÉNÉRER PDF TEMPLATE</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- APP -->
+      <section class="container" id="tabs">
+
+        <!-- STATUS -->
+        <section class="card glass">
+          <div class="card__header">
+            <h2>Objectif pédagogique</h2>
+            <p>Demande libre → prompt structuré → ZIP LaTeX + PDF.</p>
+          </div>
+
+          <div class="steps">
+            <button class="step step--active" id="step1"><span class="dot"></span><b>Étape 1</b> Demande</button>
+            <button class="step" id="step2"><span class="dot"></span><b>Étape 2</b> Correction</button>
+            <button class="step" id="step3"><span class="dot"></span><b>Étape 3</b> Génération</button>
+          </div>
+
+          <div class="status">
+            <div class="status__left">
+              <span class="status__label">Statut</span>
+              <span class="status__text" id="statusText">Prêt.</span>
+            </div>
+            <span class="pill pill--ok" id="statusPill">OK</span>
+          </div>
+        </section>
+
+        <!-- INPUT -->
+        <section class="card glass">
+          <div class="card__header">
+            <h2>Saisie</h2>
+            <p>Écris ta demande, puis corrige et génère le ZIP.</p>
+          </div>
+
+          <textarea id="input" class="textarea" placeholder="Exemple :
+Génère un template LaTeX ENSA avec page de garde, remerciements, résumé FR/EN, table des matières, chapitres, bibliographie, annexes. Contenu neutre."></textarea>
+
+          <div class="actions">
+            <button class="btn btn--ghost" id="btnCopyCorrection">COPIER CORRECTION</button>
+            <button class="btn btn--ghost" id="btnCopyFrameworks">COPIER FRAMEWORKS</button>
+          </div>
+
+          <div class="hint">
+            <b>Note :</b> L’onglet PDF affiche template.pdf. Le bouton “GÉNÉRER PDF” télécharge exemple.pdf.
+          </div>
+        </section>
+
+        <!-- TABS -->
+        <section class="card glass">
+          <div class="tabs">
+            <button class="tab tab--active" data-tab="correction">Correction</button>
+            <button class="tab" data-tab="frameworks">Frameworks</button>
+            <button class="tab" data-tab="previews">Previews</button>
+            <button class="tab" data-tab="tree">Arborescence</button>
+            <button class="tab" data-tab="pdf">PDF</button>
+          </div>
+
+          <!-- Correction -->
+          <div class="panel panel--active" id="tab-correction">
+            <p class="panel__desc">Prompt structuré généré.</p>
+            <pre class="code" id="correctionBox">Clique sur ↺ (Corriger) ou “Corriger le prompt”.</pre>
+          </div>
+
+          <!-- Frameworks -->
+          <div class="panel" id="tab-frameworks">
+            <p class="panel__desc">Frameworks</p>
+            <pre class="code" id="fwBox">SCQA
+ Situation :
+  Cadre académique normalisé : un rapport comporte des pages/sections obligatoires
+  (page de garde, remerciements, résumé FR/EN, table des matières, chapitres, bibliographie, annexes).
+
+- Complication :
+  Les écoles, filières et encadrants imposent des variations (logos, titres, mentions, ordre des pages).
+  En plus, on a plusieurs formats de sortie (LaTeX, PDF) et un besoin de maintenance :
+  modifier une seule fois sans casser tout le document.
+
+- Question :
+  Comment produire un template unique, maintenable et exportable qui s’adapte aux variations
+  tout en garantissant la même qualité de rendu ?
+
+- Answer :
+  Mettre en place une architecture modulaire (fichiers séparés) + métadonnées centralisées :
+  - séparation : config/ (packages, metadata) / frontmatter / chapters / backmatter
+  - page de garde paramétrée (logos, titres, jury) via variables
+  - génération stable (même structure) + adaptation (changements localisés)
+
+
+CO-STAR (Cadre de spécification du prompt)
+- Context :
+  Rapport académique (stage/PFE) avec contraintes institutionnelles (ENSA), style formel,
+  et besoin d’intégration directe dans LaTeX.
+
+- Objective :
+  Générer un template LaTeX neutre (structure + pages) et réutilisable,
+  sans contenu de sujet, tout en gardant un rendu “institutionnel”.
+
+- Style :
+  Rédaction académique : phrases courtes, titres clairs, pas de langage promotionnel,
+  pas d’opinions, pas de détails non demandés.
+
+- Tone :
+  Neutre, professionnel, orienté conformité (ce qui est obligatoire, ce qui est optionnel).
+
+- Audience :
+  Étudiants (édition rapide), encadrants (validation), jury (lecture claire).
+
+- Response :
+  Sortie attendue = projet LaTeX complet :
+  - arborescence modulaire
+  - main.tex minimal (include des modules)
+  - fichiers vides mais structurés (frontmatter/chapters/backmatter)
+  - placeholders pour les champs variables (noms, logos, année…)
+
+
+ICDF (Spécification contrôlée)
+Input
+- Contexte académique (type de rapport + structure attendue)
+- Rôle du modèle (générateur de template LaTeX)
+- Format de sortie souhaité (fichiers .tex organisés + ZIP)
+- Contraintes stylistiques/pédagogiques (neutre, clair, réutilisable)
+
+Constraints
+- Neutralité académique : pas de sujet technique, pas de contenu inventé
+- Clarté et concision : sections minimales, titres explicites
+- Compatibilité LaTeX/PDF : packages standards, compilation stable
+- Maintenabilité : variables centralisées, modules séparés
+
+Directives
+- Séparer Contexte / Tâche / Format de sortie
+- Utiliser des placeholders pour toutes les infos variables
+- Garantir que les pages obligatoires existent même si elles sont “vides”
+- Prévoir l’extension (ajout de chapitres/annexes) sans casser la structure
+
+Format
+- Sortie en sections structurées + fichiers prêts à compiler
+- Présenter l’arborescence + previews de fichiers clés (main.tex, metadata.tex)
+
+
+Few-shot (Méthodologie de calibration)
+Objectif :
+  Stabiliser la qualité du rendu académique en s’appuyant sur des rapports existants
+  comme “gabarits de structure” (sans copier le contenu).
+
+Principe :
+  - Montrer au modèle 1 à 3 exemples de structure (page de garde, sommaire, chapitres)
+  - En déduire le style : titres, espacement, ordre des pages, conventions (FR/EN)
+  - Répliquer la forme attendue avec des placeholders
+
+Effet attendu :
+  - Format plus cohérent entre sections
+  - Moins de variations de style
+  - Résultats plus proches des standards de l’école
+
+Exemple d’usage (résumé) :
+  “Voici un ancien rapport (structure uniquement). Génère le même squelette
+   en gardant les sections, mais remplace les contenus par des placeholders.</pre>
+          </div>
+
+          <!-- Previews -->
+          <div class="panel" id="tab-previews">
+            <p class="panel__desc">Aperçu de fichiers générés.</p>
+            <div class="split">
+              <div>
+                <div class="label">main.tex</div>
+                <pre class="code" id="previewMain">Génère le template pour voir l’aperçu.</pre>
+              </div>
+              <div>
+                <div class="label">config/metadata.tex</div>
+                <pre class="code" id="previewMeta">Génère le template pour voir l’aperçu.</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tree -->
+          <div class="panel" id="tab-tree">
+            <p class="panel__desc">Arborescence du ZIP.</p>
+            <pre class="code" id="treeBox">Génère le template pour afficher l’arborescence.</pre>
+          </div>
+
+          <!-- PDF -->
+          <div class="panel" id="tab-pdf">
+            <p class="panel__desc" id="pdf">
+              Iframe = <b>template.pdf</b> (modèle). Bouton “GÉNÉRER PDF” = <b>exemple.pdf</b> (téléchargement).
+            </p>
+
+            <div class="actions" style="margin-bottom:12px;">
+              <button class="btn btn--primary" id="btnPdfModel2">Télécharger Exemple avec ce template.pdf</button>
+
+              <button class="btn btn--ghost" id="btnPdfTemplate1" disabled style="display:none;">
+
+              </button>
+            </div>
+
+            <iframe id="pdfModelFrame" class="pdfFrame" title="PDF affiché"></iframe>
+          </div>
+        </section>
+
+        <footer class="footer">
+          Projet académique — Prompt Engineering · LaTeX · PDF
+        </footer>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
